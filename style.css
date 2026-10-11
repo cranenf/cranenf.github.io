@@ -1,0 +1,276 @@
+/* ===== 全局重置 ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "宋体", "SimSun", serif;
+    color: #333;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+/* ===== 顶部背景区域 ===== */
+.hero {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    background-color: #000000;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 40px;
+}
+
+/* ===== 导航栏 ===== */
+.navbar {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    z-index: 2;
+}
+
+.nav-link {
+    color: #ffffff;
+    font-family: "宋体", "SimSun", serif;
+    font-size: 18px;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ===== 头像区域 ===== */
+.profile-area {
+    display: flex;
+    align-items: center;
+    margin-top: 30px;
+    z-index: 2;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #ff0000;
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    flex-shrink: 0;
+    background-size: cover;
+    background-position: center;
+}
+
+/* ===== 主体内容 ===== */
+.content {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.markdown-body {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    line-height: 1.8;
+    font-size: 16px;
+    /* 防止长内容（如数学公式、长代码行）溢出容器 */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+/* 博客详情中的所有段落、代码块也应用换行 */
+#blogContent .markdown-body p,
+#blogContent .markdown-body pre,
+#blogContent .markdown-body code,
+#blogContent .markdown-body li {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+/* LaTeX 块公式内容换行 */
+#blogContent .markdown-body div[style*="text-align:center"] {
+    overflow-x: auto;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+
+.markdown-body p {
+    margin-bottom: 16px;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+    margin-left: 24px;
+    margin-bottom: 16px;
+}
+
+/* ===== 博客列表样式 ===== */
+.blog-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 24px 32px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.15s;
+}
+.blog-card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+.blog-card h3 {
+    font-size: 20px;
+    color: #222;
+    margin-bottom: 6px;
+}
+.blog-card .blog-meta {
+    font-size: 13px;
+    color: #999;
+}
+
+/* ===== 返回按钮 ===== */
+.btn-back {
+    font-family: "宋体", "SimSun", serif;
+    font-size: 14px;
+    color: #4a90d9;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 12px;
+    display: inline-block;
+    padding: 4px 0;
+}
+.btn-back:hover {
+    color: #357abd;
+}
+
+/* ===== 代码块样式 ===== */
+.markdown-body pre {
+    background-color: #f6f8fa;
+    border-radius: 4px;
+    padding: 16px;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+.markdown-body code {
+    font-family: Consolas, "Courier New", monospace;
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+}
+.markdown-body pre code {
+    background: none;
+    padding: 0;
+}
+
+/* ===== 图片自适应 ===== */
+.markdown-body img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 16px auto;
+}
+
+/* ===== 引用块 ===== */
+.markdown-body blockquote {
+    border-left: 4px solid #4a90d9;
+    background: #f8f9fa;
+    padding: 12px 20px;
+    margin: 16px 0;
+    color: #555;
+}
+
+/* ===== 表格（外层可横向滚动，窄屏不溢出） ===== */
+.markdown-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    display: block;
+    overflow-x: auto;
+}
+.markdown-body th,
+.markdown-body td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: left;
+    white-space: nowrap;
+}
+.markdown-body th {
+    background-color: #f6f8fa;
+    font-weight: bold;
+}
+
+/* ===== 列表 ===== */
+.markdown-body ul,
+.markdown-body ol {
+    margin: 0 0 16px 24px;
+}
+.markdown-body li {
+    margin-bottom: 6px;
+}
+.markdown-body li > ul,
+.markdown-body li > ol {
+    margin-top: 6px;
+    margin-bottom: 0;
+}
+
+/* ===== 四级标题 ===== */
+.markdown-body h4 {
+    font-size: 16px;
+    margin-top: 18px;
+    margin-bottom: 10px;
+}
+
+/* ===== 行内代码与代码块 ===== */
+.markdown-body code {
+    font-family: Consolas, "Courier New", monospace;
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+    word-break: break-all;
+}
+.markdown-body pre {
+    background-color: #f6f8fa;
+    border-radius: 4px;
+    padding: 16px;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+.markdown-body pre code {
+    background: none;
+    padding: 0;
+    word-break: normal;
+}
+
+/* ===== 占位页面 ===== */
+.placeholder {
+    max-width: 800px;
+    margin: 80px auto;
+    padding: 40px;
+    text-align: center;
+    font-size: 18px;
+    color: #999;
+}

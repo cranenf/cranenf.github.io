@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的个人网站</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$','$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                tags: 'ams'
+            },
+            options: {
+                ignoreHtmlClass: 'no-mathjax',
+                processHtmlClass: 'mathjax'
+            },
+            startup: {
+                pageReady: function() {
+                    return MathJax.startup.defaultPageReady();
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+</head>
+<body>
+    <!-- 顶部背景区域 -->
+    <header class="hero" id="hero">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <a href="#" class="nav-link" data-page="home">回到主页</a>
+            <a href="#" class="nav-link" data-page="blog">博客</a>
+            <a href="#" class="nav-link" data-page="interests">个人兴趣</a>
+            <a href="#" class="nav-link" data-page="projects">个人项目</a>
+        </nav>
+
+        <!-- 头像区域 -->
+        <div class="profile-area">
+            <div class="avatar" id="avatar"></div>
+        </div>
+    </header>
+
+    <!-- 主体内容 -->
+    <main class="content">
+        <!-- 首页（默认显示） -->
+        <article class="markdown-body" id="homeContent"></article>
+        <!-- 博客列表页面 -->
+        <div id="blogList" style="display:none;">
+            <!-- 标题在上方，内容由 js 生成 -->
+        </div>
+        <!-- 博客文章详情页面（默认隐藏） -->
+        <div id="blogDetail" style="display:none;">
+            <button class="btn-back" id="backBtn">← 返回博客列表</button>
+            <article class="markdown-body" id="blogContent"></article>
+        </div>
+        <!-- 个人介绍（默认隐藏） -->
+        <article class="markdown-body" id="markdownContent" style="display:none;"></article>
+    </main>
+
+    <!-- 点击导航后显示的空白占位区域（隐藏） -->
+    <div class="placeholder" id="placeholder" style="display:none;">
+        <p>此页面内容正在建设中...</p>
+    </div>
+
+    <!-- 文章数据快照（由 build-posts.js 生成）：让直接双击打开本文件时也能显示文章 -->
+    <script src="posts-data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
