@@ -1,0 +1,32 @@
+---
+import { Icon } from "astro-icon/components";
+import PostPage from "@/components/layout/PostPage.astro";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import { getSortedPosts } from "@/utils/content-utils";
+
+// 「兴趣」板块：列出 category === "兴趣" 的文章
+const SECTION_CATEGORY = "兴趣";
+const posts = (await getSortedPosts()).filter(
+	(p) => (p.data.category || "").trim() === SECTION_CATEGORY,
+);
+const page = { data: posts };
+---
+
+<MainGridLayout
+	title={SECTION_CATEGORY}
+	description={`「${SECTION_CATEGORY}」分类下的文章`}
+>
+	{
+		posts.length > 0 ? (
+			<PostPage page={page} />
+		) : (
+			<div class="card-base flex flex-col items-center justify-center py-16 text-neutral-400 dark:text-neutral-500">
+				<Icon name="material-symbols:interests" class="text-6xl mb-4 opacity-50" />
+				<p class="text-lg">这里还没有文章</p>
+				<p class="text-sm mt-2">
+					在后台或 Markdown 中把文章的分类（category）设为「兴趣」，就会显示在这里
+				</p>
+			</div>
+		)
+	}
+</MainGridLayout>

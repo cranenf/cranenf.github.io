@@ -56,11 +56,23 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		url: "#",
 		icon: "material-symbols:person",
 		children: [
+			// 兴趣
+			{
+				name: "兴趣",
+				url: "/interest/",
+				icon: "material-symbols:interests",
+				external: false,
+			},
+			// 项目
+			{
+				name: "项目",
+				url: "/projects/",
+				icon: "material-symbols:rocket-launch",
+				external: false,
+			},
+
 			// 动态
 			LinkPresets.Dynamic,
-
-			// 项目
-			LinkPresets.Projects,
 
 			// 相册
 			LinkPresets.Gallery,
