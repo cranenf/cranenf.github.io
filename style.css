@@ -161,6 +161,16 @@ body {
     color: #357abd;
 }
 
+/* ===== Giscus 评论区 ===== */
+.giscus-wrapper {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #e0e0e0;
+}
+#giscus-container {
+    min-height: 200px;
+}
+
 /* ===== 代码块样式 ===== */
 .markdown-body pre {
     background-color: #f6f8fa;

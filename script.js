@@ -201,6 +201,33 @@ function simpleMarkdown(md) {
     });
 }
 
+// ===== Giscus 配置 =====
+// 请前往 https://giscus.app/zh-CN 登录 GitHub 并安装 giscus App，
+// 选择你的仓库后生成完整的 <script> 代码，把下面的对应值替换进去。
+// 注意：你需要先在仓库 Settings → 勾选 "Discussions" 启用 Discussions 功能。
+const GISCUS_CONFIG = {
+    src: 'https://giscus.app/client.js',
+    'data-repo': 'cranenf/cranenf.github.io',
+    // 仓库的 node_id，可以从 https://api.github.com/repos/cranenf/cranenf.github.io 获取
+    'data-repo-id': 'R_kgDOVE2Cfw',
+    'data-category': 'Announcements',
+    // 分类 ID，需要先启用 Discussions 后在仓库 Discussions 页面创建分类获取
+    // 创建步骤见 README
+    'data-category-id': 'DIC_kwDOVE2Cf84Cj0c5', // ← 请替换为你的分类 ID
+    'data-mapping': 'title',      // 使用 title 模式，按文章标题自动匹配 Discussion
+    'data-strict': '0',
+    'data-reactions-enabled': '1',
+    'data-emit-metadata': '0',
+    'data-input-position': 'top',
+    'data-theme': 'light',
+    'data-lang': 'zh-CN',
+    'data-loading': 'lazy',
+    crossorigin: 'anonymous'
+};
+// giscus 的 <script> 元素引用，用于清理
+let giscusScriptElem = null;
+let giscusIframeContainer = null;
+
 // ===== 当前状态 =====
 let currentView = 'home'; // 'home' | 'categoryList' | 'postList' | 'postDetail' | 'intro'
 let currentCategory = null;
@@ -415,6 +442,48 @@ function showCategoryPosts(category) {
     // blogListDiv 已经是可见的，不需要再切换 display
 }
 
+// ===== Giscus 初始化 =====
+function initGiscus(term) {
+    var container = document.getElementById('giscus-container');
+    if (!container) return;
+
+    // 清空容器（移除之前加载的 giscus 内容）
+    container.innerHTML = '';
+
+    // 创建 giscus <script> 元素
+    var script = document.createElement('script');
+    script.src = GISCUS_CONFIG.src;
+    script.setAttribute('data-repo', GISCUS_CONFIG['data-repo']);
+    script.setAttribute('data-repo-id', GISCUS_CONFIG['data-repo-id']);
+    script.setAttribute('data-category', GISCUS_CONFIG['data-category']);
+    script.setAttribute('data-category-id', GISCUS_CONFIG['data-category-id']);
+    script.setAttribute('data-mapping', GISCUS_CONFIG['data-mapping']);
+    script.setAttribute('data-term', term);
+    script.setAttribute('data-strict', GISCUS_CONFIG['data-strict']);
+    script.setAttribute('data-reactions-enabled', GISCUS_CONFIG['data-reactions-enabled']);
+    script.setAttribute('data-emit-metadata', GISCUS_CONFIG['data-emit-metadata']);
+    script.setAttribute('data-input-position', GISCUS_CONFIG['data-input-position']);
+    script.setAttribute('data-theme', GISCUS_CONFIG['data-theme']);
+    script.setAttribute('data-lang', GISCUS_CONFIG['data-lang']);
+    script.setAttribute('data-loading', GISCUS_CONFIG['data-loading']);
+    script.crossOrigin = GISCUS_CONFIG.crossorigin;
+    script.async = true;
+    script.id = 'giscus-script';
+
+    container.appendChild(script);
+    giscusScriptElem = script;
+}
+
+// ===== 清理 Giscus =====
+function destroyGiscus() {
+    var container = document.getElementById('giscus-container');
+    if (container) {
+        container.innerHTML = '';
+    }
+    // 移除全局的 giscus 消息监听（如果有的话）
+    giscusScriptElem = null;
+}
+
 // ===== 显示博客详情 =====
 function showBlogDetail(id) {
     const post = blogPosts.find(p => p.id === id);
@@ -433,6 +502,8 @@ function showBlogDetail(id) {
             console.log('MathJax typeset error:', err);
         });
     }
+    // 初始化 Giscus 评论区，以文章标题作为讨论话题
+    initGiscus(post.title);
 }
 
 // ===== 显示首页 =====
@@ -491,6 +562,8 @@ renderIntro();
 
 // ===== 返回按钮（在文章详情页） =====
 backBtn.addEventListener('click', function() {
+    // 清理 giscus 评论区
+    destroyGiscus();
     // 返回当前分类的文章列表
     if (currentCategory !== null) {
         renderCategoryList(); // 简单处理：回到分类列表
