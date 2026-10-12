@@ -170,6 +170,11 @@ body {
 #giscus-container {
     min-height: 200px;
 }
+/* 确保评论区尊重主题配色（配合 preferred_color_scheme） */
+#giscus-container iframe {
+    width: 100%;
+    border: none;
+}
 
 /* ===== 代码块样式 ===== */
 .markdown-body pre {

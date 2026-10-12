@@ -213,13 +213,13 @@ const GISCUS_CONFIG = {
     'data-category': 'Announcements',
     // 分类 ID，需要先启用 Discussions 后在仓库 Discussions 页面创建分类获取
     // 创建步骤见 README
-    'data-category-id': 'DIC_kwDOVE2Cf84Cj0c5', // ← 请替换为你的分类 ID
+    'data-category-id': 'DIC_kwDOVE2Cf84DH2fI', // giscus 自动生成的 Announcements 分类 ID
     'data-mapping': 'title',      // 使用 title 模式，按文章标题自动匹配 Discussion
-    'data-strict': '0',
+    'data-strict': '1',
     'data-reactions-enabled': '1',
     'data-emit-metadata': '0',
-    'data-input-position': 'top',
-    'data-theme': 'light',
+    'data-input-position': 'bottom',
+    'data-theme': 'preferred_color_scheme',
     'data-lang': 'zh-CN',
     'data-loading': 'lazy',
     crossorigin: 'anonymous'
