@@ -42,11 +42,12 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		url: "#",
 		icon: "material-symbols:group",
 		children: [
-			// 友链
-			LinkPresets.Friends,
-
-			// 留言
-			LinkPresets.Guestbook,
+			{
+				name: "TEST CONTENT",
+				url: "/posts/test-social/",
+				icon: "material-symbols:article",
+				external: false,
+			},
 		],
 	});
 
@@ -100,11 +101,12 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		url: "#",
 		icon: "material-symbols:info",
 		children: [
-			// 打赏
-			LinkPresets.Sponsor,
-
-			// 关于页面
-			LinkPresets.About,
+			{
+				name: "TEST CONTENT",
+				url: "/posts/test-about/",
+				icon: "material-symbols:article",
+				external: false,
+			},
 		],
 	});
 
@@ -116,10 +118,10 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		// 子菜单
 		children: [
 			{
-				name: "GitHub",
-				url: "https://github.com/cranenf",
-				external: true,
-				icon: "fa7-brands:github",
+				name: "TEST CONTENT",
+				url: "/posts/test-links/",
+				external: false,
+				icon: "material-symbols:article",
 			},
 		],
 	});

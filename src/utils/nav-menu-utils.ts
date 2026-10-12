@@ -19,7 +19,7 @@ export function resolveNavMenuLinks(): NavBarLink[] {
 		const filteredChildren = link.children.filter(isPageEnabled);
 
 		if (filteredChildren.length === 0) return null;
-		if (filteredChildren.length === 1) return filteredChildren[0];
+		// 保留父级菜单结构：即使只剩一个子项，也作为下拉菜单显示，不再拍平成单个链接
 		return { ...link, children: filteredChildren };
 	}
 
