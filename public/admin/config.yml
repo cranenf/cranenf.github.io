@@ -5,8 +5,8 @@ backend:
   name: github
   repo: cranenf/cranenf.github.io
   branch: main
-  # ⚠️ 请把下面这行替换成你自己的 OAuth 网关地址（部署指引见聊天），否则无法登录后台
-  base_url: https://YOUR-OAUTH-GATEWAY.vercel.app
+  # OAuth 网关地址（Cloudflare Worker）
+  base_url: https://cms-auth.cranenf.workers.dev
 
 # 上传图片在仓库里的存储目录（相对仓库根目录）
 media_folder: "src/content/posts/images"
