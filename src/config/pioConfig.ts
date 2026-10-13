@@ -3,7 +3,7 @@ import type { Live2DWidgetConfig, SpineModelConfig } from "../types/pioConfig";
 // Spine 看板娘配置
 export const spineModelConfig: SpineModelConfig = {
 	// Spine 看板娘开关
-	enable: false,
+	enable: true,
 
 	// Spine模型配置
 	model: {
@@ -20,7 +20,7 @@ export const spineModelConfig: SpineModelConfig = {
 	// 位置配置
 	position: {
 		// 显示位置 bottom-left，bottom-right，top-left，top-right，注意：在右下角可能会挡住返回顶部按钮
-		corner: "bottom-left",
+		corner: "bottom-right",
 		// 距离边缘0px
 		offsetX: 0,
 		// 距离下边缘0px
@@ -85,7 +85,7 @@ export const spineModelConfig: SpineModelConfig = {
 // Live2D 看板娘配置 (使用 l2d-widget 库，文档：https://l2d-widget.hacxy.cn)
 export const live2dWidgetConfig: Live2DWidgetConfig = {
 	// Live2D 看板娘开关
-	enable: false,
+	enable: true,
 	// 模型配置，支持单个模型或数组（多模型切换）
 	model: [
 		{
