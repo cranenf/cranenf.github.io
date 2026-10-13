@@ -24,6 +24,11 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 	// 本页没有侧栏列时，内容栏占「侧栏 + 内容栏」总宽的比例（0–1），不设置或 ≥1 则铺满
 	noSidebarContentWidth: 0.6,
 
+	// 右侧边栏底部是否显示「收起侧边栏」按钮（默认 true）
+	// 点击后右栏收成窄栏、组件隐藏，按钮上移到原侧栏顶部变成「展开」按钮；再次点击还原
+	// 收起状态只保留在本次浏览内（软导航保持，刷新回到展开）
+	rightCollapseButton: true,
+
 	// 左侧边栏组件配置列表
 	// 组件的渲染顺序完全取决于它们在配置数组中出现的顺序，但top的组件会优先于sticky位置的组件渲染
 	// type 组件类型

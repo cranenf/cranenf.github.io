@@ -1,0 +1,103 @@
+---
+import { Icon } from "astro-icon/components";
+
+/**
+ * 右侧边栏「收起 / 展开」按钮。
+ *
+ * 展开态：排在右栏组件下方，随粘性容器一起吸顶，显示图标 + 文案「收起侧边栏」。
+ * 收起态：右栏轨道收成窄栏、组件隐藏，只剩它停在原侧栏顶部，缩成方形图标按钮。
+ * 两态切换靠 html.right-sidebar-collapsed（见 src/styles/layout-base.css），
+ * 点击逻辑在 src/utils/sidebar-collapse-utils.ts。
+ */
+---
+
+<div class="right-sidebar-collapse-wrap">
+	<button
+		type="button"
+		id="right-sidebar-collapse-btn"
+		class="right-sidebar-collapse-btn"
+		aria-controls="right-sidebar"
+		aria-expanded="true"
+		aria-label="收起侧边栏"
+		title="收起侧边栏"
+	>
+		<Icon
+			name="material-symbols:right-panel-close-rounded"
+			class="rsc-icon rsc-icon-collapse"
+			aria-hidden="true"
+		/>
+		<Icon
+			name="material-symbols:right-panel-open-rounded"
+			class="rsc-icon rsc-icon-expand"
+			aria-hidden="true"
+		/>
+		<span class="rsc-label">收起侧边栏</span>
+	</button>
+</div>
+
+<style lang="stylus">
+/* 与上方组件的 gap-4 节奏一致 */
+.right-sidebar-collapse-wrap
+    width: 100%
+    margin-top: 1rem
+
+.right-sidebar-collapse-btn
+    display: flex
+    align-items: center
+    justify-content: center
+    gap: 0.375rem
+    width: 100%
+    padding: 0.5rem 0.75rem
+    border: 1px solid transparent
+    border-radius: var(--radius-large)
+    background-color: var(--card-bg)
+    color: var(--primary)
+    font-size: 0.8125rem
+    font-weight: 500
+    line-height: 1.25rem
+    cursor: pointer
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease
+
+    &:hover
+        background-color: var(--btn-regular-bg-hover)
+        box-shadow: var(--shadow-button)
+
+    &:active
+        background-color: var(--btn-regular-bg-active)
+
+    &:focus-visible
+        outline: 2px solid var(--primary)
+        outline-offset: 2px
+
+    :global(svg)
+        font-size: 1.125rem
+        flex-shrink: 0
+
+/* 开启卡片描边时跟着一起描边，避免与其它卡片格格不入 */
+:global(.enable-card-border) .right-sidebar-collapse-btn
+    border-color: var(--line-divider)
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05)
+
+/* 默认（展开态）：显示「收起」图标 + 文案 */
+.rsc-icon-expand
+    display: none
+
+/* ── 收起态 ──────────────────────────────────────────────
+   组件已被 layout-base.css 隐藏，这里只剩按钮：取消上边距、缩成贴栏的方形图标按钮 */
+:global(html.right-sidebar-collapsed) .right-sidebar-collapse-wrap
+    margin-top: 0
+
+:global(html.right-sidebar-collapsed) .right-sidebar-collapse-btn
+    padding: 0.5rem
+    aspect-ratio: 1 / 1
+    border-radius: 0.75rem
+
+:global(html.right-sidebar-collapsed) .rsc-label
+    display: none
+
+:global(html.right-sidebar-collapsed) .rsc-icon-collapse
+    display: none
+
+:global(html.right-sidebar-collapsed) .rsc-icon-expand
+    display: block
+</style>

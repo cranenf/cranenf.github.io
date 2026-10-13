@@ -19,6 +19,7 @@ import { initIconLoader } from "@/utils/icon-loader";
 import { initImageLoadFadeIn } from "@/utils/lqip-utils";
 import { initScroll } from "@/utils/scroll-utils";
 import { initThemeListener, initWallpaperMode } from "@/utils/setting-utils";
+import { initRightSidebarCollapse } from "@/utils/sidebar-collapse-utils";
 import { setupSwupTransitions } from "@/utils/swup-transitions";
 import { initTouchCodeCopyReveal } from "@/utils/touch-copy-utils";
 
@@ -56,6 +57,8 @@ export function initLayout(): void {
 	registerContentOverflowListeners();
 	// 滚动路径不再读取布局；先在初始化时填充侧边栏 top 容器可见性缓存
 	refreshSidebarStickyState();
+	// 右侧边栏收起按钮：事件委托，全局注册一次
+	initRightSidebarCollapse();
 	initScroll();
 	initTouchCodeCopyReveal();
 

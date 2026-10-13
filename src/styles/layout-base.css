@@ -251,3 +251,17 @@
     opacity 0.35s ease-in-out,
     transform 0.35s ease-in-out;
 }
+
+/* 右侧边栏收起态（html.right-sidebar-collapsed 由 grid-layout-utils.ts 切换）
+   只隐藏栏内组件，列本身不删：--right-display-* 保持 contents，
+   窄栏轨道（--grid-sidebar-rail）和「展开」按钮因此仍有落点，
+   平板/桌面两档断点都不会因为整列消失而丢掉回展开的入口。
+   :not() 精确放过按钮所在容器，避免把它一起藏掉 */
+html.right-sidebar-collapsed #right-sidebar > div:not(#right-sidebar-sticky) {
+  display: none;
+}
+html.right-sidebar-collapsed
+  #right-sidebar-sticky
+  > *:not(.right-sidebar-collapse-wrap) {
+  display: none;
+}

@@ -1,5 +1,6 @@
 ---
 import type { MarkdownHeading } from "astro";
+import RightSidebarCollapseButton from "@/components/controls/RightSidebarCollapseButton.astro";
 import Advertisement from "@/components/widget/Advertisement.astro";
 import Announcement from "@/components/widget/Announcement.astro";
 import Calendar from "@/components/widget/Calendar.astro";
@@ -164,6 +165,11 @@ const bottomComponents = isMobileBottom ? filteredComponents : [];
 const hasInitiallyVisibleTopComponents = topComponents.some(
 	isComponentInitiallyVisible,
 );
+
+// 右侧「收起侧边栏」按钮：只在右栏渲染，且可用配置关掉
+const showRightCollapseButton =
+	side === SIDEBAR_SIDE.RIGHT &&
+	sidebarLayoutConfig.rightCollapseButton !== false;
 ---
 
 {
@@ -198,8 +204,8 @@ const hasInitiallyVisibleTopComponents = topComponents.some(
 						</div>
 					)}
 
-					{/* Sticky components */}
-					{stickyComponents.length > 0 && (
+					{/* Sticky components（右侧收起按钮寄生在此容器内，故它在时容器也要渲染） */}
+					{(stickyComponents.length > 0 || showRightCollapseButton) && (
 						<div
 							id={`${side}-sidebar-sticky`}
 							class:list={[
@@ -217,6 +223,7 @@ const hasInitiallyVisibleTopComponents = topComponents.some(
 								) as any;
 								return <Component {...props} />;
 							})}
+							{showRightCollapseButton && <RightSidebarCollapseButton />}
 						</div>
 					)}
 				</>

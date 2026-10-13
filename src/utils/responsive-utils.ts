@@ -3,7 +3,12 @@ import { sidebarLayoutConfig } from "@/config";
 /** 侧栏列宽，全仓库唯一字面值出处 */
 const SIDEBAR_WIDTH = "17.5rem";
 
+/** 右侧边栏收起后保留的窄栏宽度，只够容纳「展开」按钮 */
+const SIDEBAR_RAIL_WIDTH = "3rem";
+
 const SIDEBAR_TRACK = "var(--grid-sidebar-width)";
+
+const SIDEBAR_RAIL_TRACK = "var(--grid-sidebar-rail)";
 
 export interface ResponsiveSidebarConfig {
 	/**
@@ -98,6 +103,8 @@ export interface GridColumnsInput {
 	hasRightWidgets: boolean;
 	/** 无侧栏列时内容栏占包裹层总宽的比例（0–1），不设置或 ≥1 则铺满 */
 	noSidebarContentWidth?: number;
+	/** 右侧边栏是否已收起：列仍保留（供展开按钮栖身），只把轨道换成窄栏宽度 */
+	rightCollapsed?: boolean;
 }
 
 /** #main-grid 的列几何，由 gridColumnVarsToStyle 序列化 */
@@ -110,16 +117,26 @@ export interface GridColumnVars {
 	"--right-display-xl": "contents" | "none";
 	/** 侧栏列宽。不能叫 --sidebar-width，那会遮蔽 variables.styl 里的同名全局变量 */
 	"--grid-sidebar-width": string;
+	/** 右侧边栏收起后的窄栏宽度 */
+	"--grid-sidebar-rail": string;
 	/** 内容栏占包裹层总宽的比例（无单位，1 = 不收窄），按断点各自判定 */
 	"--content-ratio-md": number;
 	"--content-ratio-xl": number;
 }
 
-/** 按左右两侧是否占列生成轨道串 */
-function trackSegments(left: boolean, right: boolean): string {
-	if (left && right) return `${SIDEBAR_TRACK} 1fr ${SIDEBAR_TRACK}`;
+/**
+ * 按左右两侧是否占列生成轨道串。
+ * 右侧收起时换成窄栏轨道 —— 列本身保留，收起态只有展开按钮留在里面。
+ */
+function trackSegments(
+	left: boolean,
+	right: boolean,
+	rightCollapsed: boolean,
+): string {
+	const rightTrack = rightCollapsed ? SIDEBAR_RAIL_TRACK : SIDEBAR_TRACK;
+	if (left && right) return `${SIDEBAR_TRACK} 1fr ${rightTrack}`;
 	if (left) return `${SIDEBAR_TRACK} 1fr`;
-	if (right) return `1fr ${SIDEBAR_TRACK}`;
+	if (right) return `1fr ${rightTrack}`;
 	return "1fr";
 }
 
@@ -155,14 +172,17 @@ export function computeGridColumns(input: GridColumnsInput): GridColumnVars {
 	const ratioMd = input.enabled && !mdLeft && !mdRight ? ratio : 1;
 	const ratioXl = input.enabled && !leftIn && !rightIn ? ratio : 1;
 
+	const rightCollapsed = input.rightCollapsed === true;
+
 	return {
-		"--cols-md": trackSegments(mdLeft, mdRight),
-		"--cols-xl": trackSegments(leftIn, rightIn),
+		"--cols-md": trackSegments(mdLeft, mdRight, rightCollapsed),
+		"--cols-xl": trackSegments(leftIn, rightIn, rightCollapsed),
 		"--left-display-md": mdLeft ? "contents" : "none",
 		"--left-display-xl": leftIn ? "contents" : "none",
 		"--right-display-md": mdRight ? "contents" : "none",
 		"--right-display-xl": rightIn ? "contents" : "none",
 		"--grid-sidebar-width": SIDEBAR_WIDTH,
+		"--grid-sidebar-rail": SIDEBAR_RAIL_WIDTH,
 		"--content-ratio-md": ratioMd,
 		"--content-ratio-xl": ratioXl,
 	};

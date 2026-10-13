@@ -23,6 +23,35 @@ const isCurrentPagePost = (): boolean =>
 // 上一次写入 #main-grid 的几何，用于 page:view 重复调用时短路
 let lastAppliedGeometry = "";
 
+// 右侧边栏收起状态。只在本次加载内有效：跟随 Swup 软导航保持，硬刷新回到展开。
+// 不落任何持久化存储 —— 收起态会改列几何，若与 SSR 首帧不一致会在加载时闪一下
+let rightSidebarCollapsed = false;
+
+/** html 上的收起态类名：CSS 据此隐藏右栏组件、并切换按钮的图标/文案/尺寸 */
+const COLLAPSED_CLASS = "right-sidebar-collapsed";
+
+export function isRightSidebarCollapsed(): boolean {
+	return rightSidebarCollapsed;
+}
+
+/** 切换右侧边栏收起态，并立即重算列几何 */
+export function setRightSidebarCollapsed(collapsed: boolean): void {
+	if (rightSidebarCollapsed === collapsed) return;
+	rightSidebarCollapsed = collapsed;
+	syncRightSidebarCollapsedClass();
+	updateMainGridCols();
+	// 组件显隐变了，sticky 间距缓存要跟着刷新（含布局读取，只在切换这一次发生）
+	refreshSidebarStickyState();
+}
+
+/** 把 html 类名对齐当前状态（初始化/切页后调用，防状态漂移） */
+export function syncRightSidebarCollapsedClass(): void {
+	document.documentElement.classList.toggle(
+		COLLAPSED_CLASS,
+		rightSidebarCollapsed,
+	);
+}
+
 // 更新主网格的列几何。
 // SSR 写的是同一组自定义属性（见 MainGridLayout 的 style），这里在每次 swup page:view 时
 // 按当前页面类型重算，保证软导航后与 SSR 一致；两者共用 computeGridColumns 这一真源。
@@ -62,6 +91,8 @@ export function updateMainGridCols(): void {
 			isPostPage ? "data-has-right-on-post" : "data-has-right-on-non-post",
 		),
 		noSidebarContentWidth: Number.isFinite(capNum) ? capNum : undefined,
+		// 收起态只影响轨道宽度，列本身保留（展开按钮栖身于窄栏内）
+		rightCollapsed: rightSidebarCollapsed,
 	});
 
 	const serialized = gridColumnVarsToStyle(vars);
