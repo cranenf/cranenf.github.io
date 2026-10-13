@@ -401,6 +401,7 @@ export const ja: Translation = {
 	[Key.overlayOpacity]: "壁紙の透明度",
 	[Key.overlayBlur]: "背景ぼかし",
 	[Key.overlayCardOpacity]: "カード透明度",
+	[Key.uiOpacity]: "UI の不透明度",
 
 	// 設定パネルタブ
 	[Key.settingsTabAppearance]: "外観",

@@ -7,8 +7,13 @@
 :root
   --primary: oklch(0.70 0.14 var(--hue))
   --page-bg: oklch(0.95 0.01 var(--hue))
-  --card-bg: white
+  /* --card-bg-base 是"不透明的卡片底色"，--card-bg 由它派生。
+     界面不透明度滑块会重写 --card-bg（见文件末尾），但不动 base。 */
+  --card-bg-base: white
+  --card-bg: var(--card-bg-base)
   --card-bg-transparent: unquote("rgb(255 255 255 / var(--card-transparent-opacity, 0.6))")
+  /* 界面不透明度，0-1；由导航栏滑块写入 html 的行内样式。始终有值，避免 calc() 失效 */
+  --ui-opacity: 1
   
   --btn-content: oklch(0.55 0.12 var(--hue))
   --btn-regular-bg: oklch(0.95 0.025 var(--hue))
@@ -83,15 +88,39 @@
   /* 主题色选择条渐变 */
   --color-selection-bar: linear-gradient(to right, oklch(0.80 0.10 0), oklch(0.80 0.10 30), oklch(0.80 0.10 60), oklch(0.80 0.10 90), oklch(0.80 0.10 120), oklch(0.80 0.10 150), oklch(0.80 0.10 180), oklch(0.80 0.10 210), oklch(0.80 0.10 240), oklch(0.80 0.10 270), oklch(0.80 0.10 300), oklch(0.80 0.10 330), oklch(0.80 0.10 360))
 
+  /* ===== 整页随机背景图（横幅模式）=====
+     由 Layout.astro 在首帧前写入 --page-bg-image 与 --page-bg-image-set；
+     未写入时两个变量为 none，页面保持原有的纯色 --page-bg 背景。
+     这里不使用 CSS 图层（@layer），以便稳定压过 Tailwind 的 bg-(--page-bg) 工具类。
+     背景挂在 <html> 上：横幅（#wallpaper-wrapper）是 absolute z-10 且只占顶部 65vh，
+     所以向下滚动横幅移出视口后，露出的就是这张背景图。
+     图片为 2560px 宽的 AVIF（另有 WebP 兜底），cover 裁切、center 居中，不会变形。 */
+  --page-bg-image: none
+  --page-bg-image-set: none
+
+html
+  background-color: var(--page-bg)
+  background-image: var(--page-bg-image-set, var(--page-bg-image, none))
+  background-position: center center
+  background-repeat: no-repeat
+  background-size: cover
+
+/* 仅桌面端固定背景；移动端保持滚动，避免 background-attachment: fixed 引起的滚动掉帧 */
+@media (min-width: 1024px)
+  html[data-page-bg-fixed]
+    background-attachment: fixed
+
 /* 卡片风格跟随主题色相 */
 :root:not(.dark) body.card-follow-theme-hue
-  --card-bg: oklch(1 0.01 var(--hue))
+  --card-bg-base: oklch(1 0.01 var(--hue))
+  --card-bg: var(--card-bg-base)
 
 /* 暗色主题变量 */
 :root.dark
   --primary: oklch(0.75 0.14 var(--hue))
   --page-bg: oklch(0.16 0.014 var(--hue))
-  --card-bg: oklch(0.23 0.015 var(--hue))
+  --card-bg-base: oklch(0.23 0.015 var(--hue))
+  --card-bg: var(--card-bg-base)
   --card-bg-transparent: unquote("rgb(23 23 23 / var(--card-transparent-opacity, 0.6))")
 
   /* 导航栏玻璃高光与发丝线（暗色） */
@@ -333,3 +362,10 @@
   :root
     --container-width: var(--container-lg)
     --widget-gap: var(--widget-gap-desktop)
+
+/* ===== 界面不透明度（导航栏除外） =====
+ * 只在 #content-panel / #floating-toc-wrapper 上重写 --card-bg，数值来自导航栏滑块。
+ * 导航栏（#navbar-wrapper）在这两棵子树之外，读到的仍是 :root 的 --card-bg，保持不透明。
+ * 属性 data-ui-opacity 只在用户把它调到 100 以下时才出现，100 时完全是主题原本的配色。 */
+html[data-ui-opacity] #content-panel, html[data-ui-opacity] #floating-toc-wrapper
+  --card-bg: unquote("color-mix(in oklab, var(--card-bg-base) calc(var(--ui-opacity) * 100%), transparent)")

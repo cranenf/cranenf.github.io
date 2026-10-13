@@ -135,6 +135,11 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 		// 支持所有CSS object-position值，如: 'top', 'center', 'bottom', 'left top', 'right bottom', '25% 75%', '10px 20px'..
 		// 如果不知道怎么配置百分百之类的配置，推荐直接使用：'center'居中，'top'顶部居中，'bottom' 底部居中，'left'左侧居中，'right'右侧居中
 		position: "0% 20%",
+		// 图片填充方式："cover" 铺满整个横幅（按比例裁切上下），"contain" 完整显示原图、不裁切
+		// 注意：原图比例与横幅差别较大时建议用 "contain"，否则只会看到中间一条
+		fit: "contain",
+		// fit 为 "contain" 时，两侧留白用同一张图的模糊放大版填充（不会额外下载图片）
+		blurBackdrop: true,
 		// 文章横幅信息："description" 显示描述，"meta" 显示日期、字数和阅读时长
 		postInfo: {
 			mode: "description",
@@ -184,5 +189,91 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 				mobile: true,
 			},
 		},
+	},
+	/**
+	 * 整页随机背景图（横幅模式专用）
+	 *
+	 * 作用：在保持 mode: "banner"（顶部横幅壁纸）不变的前提下，
+	 * 为横幅下方原本是纯色（--page-bg）的区域铺一张随机背景图。
+	 * 向下滚动时顶部横幅照常移出视口，而背景图始终留在那里。
+	 *
+	 * 文件放在 public/wallpaper/ 目录下，由 _sources.json 记录来源（Steam 创意工坊 ID）。
+	 * 每张都提供 AVIF + WebP 两种格式，浏览器自动择优选一个下载（可用 Chrome 的
+	 * 网络面板确认只请求了一个文件）。每次整页加载/刷新随机选一张，
+	 * 站内跳转（Swup）不会更换，避免翻页时背景跳变。
+	 *
+	 * 关闭方法：把 enable 改成 false 即可恢复纯色背景，无需删除图片。
+	 */
+	pageBackground: {
+		enable: true,
+		// 桌面端背景是否固定（滚动时背景不动）；移动端始终改为随内容滚动，
+		// 因为 background-attachment: fixed 在手机上会造成滚动掉帧
+		fixed: true,
+		wallpapers: [
+			{ file: "w01.avif", srcWidth: 7684, srcHeight: 4320 }, // 落日群山 · 原神 荧 世界の镇魂歌
+			{ file: "w02.avif", srcWidth: 7680, srcHeight: 4320 }, // 欧式小巷 · 伊蕾娜
+			{ file: "w03.avif", srcWidth: 5241, srcHeight: 2937 }, // prism magic
+			{ file: "w04.avif", srcWidth: 4096, srcHeight: 2451 }, // Arknights Ch'en Office
+			{ file: "w05.avif", srcWidth: 4096, srcHeight: 2180 }, // anime rain · 雨夜车窗
+			{ file: "w06.avif", srcWidth: 3840, srcHeight: 2160 }, // Golden flowers
+			{ file: "w07.avif", srcWidth: 3840, srcHeight: 2160 }, // 昼間
+			{ file: "w08.avif", srcWidth: 3840, srcHeight: 2160 }, // 桜吹雪
+			{ file: "w09.avif", srcWidth: 3840, srcHeight: 2160 }, // Girl and Fluorescent Beach
+			{ file: "w10.avif", srcWidth: 3840, srcHeight: 2160 }, // Subway Station
+			{ file: "w11.avif", srcWidth: 6144, srcHeight: 3072 }, // 莉可丽丝 · 欧风街道
+			{ file: "w12.avif", srcWidth: 5248, srcHeight: 2944 }, // 赛博色彩 · 夏橙水韵
+			{ file: "w13.avif", srcWidth: 4415, srcHeight: 2484 }, // 崩坏星穹铁道 · 布洛妮娅
+			{ file: "w14.avif", srcWidth: 2560, srcHeight: 1440 }, // 最初的约会 · 咖啡店
+			{ file: "w15.avif", srcWidth: 4096, srcHeight: 2304 }, // 原神 · 芙宁娜
+			{ file: "w16.avif", srcWidth: 3840, srcHeight: 2160 }, // 雷电影 · 电竞桌面
+			{ file: "w17.avif", srcWidth: 2560, srcHeight: 1440 }, // 放課後の女生徒
+			{ file: "w18.avif", srcWidth: 3840, srcHeight: 2160 }, // 那日与你一同的见证
+			{ file: "w19.avif", srcWidth: 3840, srcHeight: 2160 }, // 原神 · 神里绫华 水花
+			{ file: "w20.avif", srcWidth: 2560, srcHeight: 1440 }, // 来水美树 · ランス10
+			{ file: "w21.avif", srcWidth: 2560, srcHeight: 1440 }, // 雨天 · 商店旁的少女
+			{ file: "w22.avif", srcWidth: 2560, srcHeight: 1440 }, // Solemn Downpour · 雨与猫
+			{ file: "w23.avif", srcWidth: 3840, srcHeight: 2160 }, // 来自法兰西的少女
+			{ file: "w24.avif", srcWidth: 2560, srcHeight: 1440 }, // 心海的房间
+			{ file: "w25.avif", srcWidth: 3840, srcHeight: 2160 }, // 暗夜 · 花街
+			{ file: "w26.avif", srcWidth: 3840, srcHeight: 2160 }, // 微笑 p2
+			{ file: "w27.avif", srcWidth: 2560, srcHeight: 1440 }, // 蓝瞳的猫娘
+			{ file: "w28.avif", srcWidth: 2271, srcHeight: 1277 }, // 阳光少女
+			{ file: "w29.avif", srcWidth: 3840, srcHeight: 2160 }, // 孤独摇滚 · 便利店
+			{ file: "w30.avif", srcWidth: 3840, srcHeight: 2160 }, // 明日方舟 · 星极
+			{ file: "w31.avif", srcWidth: 3840, srcHeight: 2160 }, // 浮光
+			{ file: "w32.avif", srcWidth: 3840, srcHeight: 2160 }, // 原神 · 芙宁娜 3D
+			{ file: "w33.avif", srcWidth: 3840, srcHeight: 2160 }, // 绝望的落日
+			{ file: "w34.avif", srcWidth: 3840, srcHeight: 2160 }, // 黑桃 · 纸牌之夜
+			{ file: "w35.avif", srcWidth: 3840, srcHeight: 2160 }, // 初音未来 4K
+			{ file: "w36.avif", srcWidth: 3840, srcHeight: 2160 }, // 绝区零 · 青衣国风
+			{ file: "w37.avif", srcWidth: 3840, srcHeight: 2160 }, // 打游戏的少女
+			{ file: "w38.avif", srcWidth: 3840, srcHeight: 2160 }, // 看落日的少女
+			{ file: "w39.avif", srcWidth: 3296, srcHeight: 1920 }, // 爱莉 · 花丛
+			{ file: "w40.avif", srcWidth: 2560, srcHeight: 1440 }, // 墨心
+			{ file: "w41.avif", srcWidth: 2560, srcHeight: 1440 }, // 夏日的森林
+			{ file: "w42.avif", srcWidth: 2560, srcHeight: 1440 }, // 花之少女 · 秋
+			{ file: "w43.avif", srcWidth: 2560, srcHeight: 1440 }, // Skuld
+			{ file: "w44.avif", srcWidth: 2560, srcHeight: 1440 }, // 雨天 · 商店街
+			{ file: "w45.avif", srcWidth: 2560, srcHeight: 1440 }, // 莉可丽丝 · 车站人群
+			{ file: "w46.avif", srcWidth: 2560, srcHeight: 1440 }, // 星空 · 粉色少女
+			{ file: "w47.avif", srcWidth: 2560, srcHeight: 1440 }, // Pastel Mix
+			{ file: "w48.avif", srcWidth: 2560, srcHeight: 1440 }, // 星穹 · 初音未来
+			{ file: "w49.avif", srcWidth: 2560, srcHeight: 1440 }, // Lo-fi 落日
+			{ file: "w50.avif", srcWidth: 2560, srcHeight: 1440 }, // 白夜 · 明亮的房间
+		],
+	},
+	/**
+	 * 界面不透明度（导航栏除外）
+	 *
+	 * 在导航栏搜索框左侧显示一个 0-100 的滑块，用来调整内容区卡片/面板的不透明度，
+	 * 数值越低卡片越透明、背后的壁纸越明显。取值会写进 localStorage，
+	 * 刷新后仍然生效；导航栏自身保持不透明。
+	 *
+	 * 关闭方法：把 enable 改成 false，滑块不再渲染，界面恢复原有外观。
+	 */
+	uiOpacity: {
+		enable: true,
+		// 默认值，0-100，100 表示完全不透明（与原主题外观完全一致）
+		default: 100,
 	},
 };

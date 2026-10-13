@@ -15,6 +15,8 @@ const IGNORE_DIRS = [
 	"public/assets/images/effects/**",
 	"public/assets/music/**",
 	"public/vndb-covers/**",
+	// 整页随机背景图：不参与 LQIP（它们从不做封面，且本身已经压过）
+	"public/wallpaper/**",
 ];
 
 interface RgbColor {

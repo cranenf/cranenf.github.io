@@ -404,6 +404,7 @@ export const en: Translation = {
 	[Key.overlayOpacity]: "Wallpaper Opacity",
 	[Key.overlayBlur]: "Background Blur",
 	[Key.overlayCardOpacity]: "Card Opacity",
+	[Key.uiOpacity]: "UI Opacity",
 
 	// Settings Panel Tabs
 	[Key.settingsTabAppearance]: "Appearance",

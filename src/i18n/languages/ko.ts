@@ -402,6 +402,7 @@ export const ko: Translation = {
 	[Key.overlayOpacity]: "배경화면 불투명도",
 	[Key.overlayBlur]: "배경 흐림",
 	[Key.overlayCardOpacity]: "카드 불투명도",
+	[Key.uiOpacity]: "UI 불투명도",
 
 	// Settings Panel Tabs
 	[Key.settingsTabAppearance]: "외형",

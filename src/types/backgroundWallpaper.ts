@@ -1,5 +1,27 @@
 export type FullscreenWallpaperLayout = "classic" | "hero";
 
+// 整页随机背景图：单张壁纸条目
+export type PageBackgroundWallpaper = {
+	file: string; // 桌面端文件名（含扩展名），位于 public/wallpaper/ 目录，默认 AVIF 格式
+	webpFile?: string; // 同图的 WebP 兜底文件名；缺省时按 file 的主名自动推断为 .webp
+	mobileFile?: string; // 移动端单独的文件名，缺省时与 file 相同
+	srcWidth?: number; // 原图宽度（仅作记录）
+	srcHeight?: number; // 原图高度（仅作记录）
+};
+
+// 整页随机背景图配置：在横幅模式（banner）下，为横幅以下的内容区提供随机背景图
+export type PageBackgroundConfig = {
+	enable: boolean; // 是否启用，关闭后恢复纯色背景
+	fixed: boolean; // 桌面端背景是否固定（滚动时不移动）；移动端始终随内容滚动以保证滚动流畅
+	wallpapers: PageBackgroundWallpaper[]; // 壁纸列表，每次整页加载随机选一张
+};
+
+// 界面不透明度：控制内容区卡片/面板的不透明度，数值越低壁纸越明显（不影响导航栏）
+export type UiOpacityConfig = {
+	enable?: boolean; // 是否在导航栏显示调节滑块，默认 false
+	default?: number; // 默认值，0-100，默认 100（完全不透明）
+};
+
 export type BackgroundWallpaperConfig = {
 	mode: "banner" | "fullscreen" | "overlay" | "none"; // 壁纸模式：banner横幅模式、fullscreen全屏壁纸、overlay全屏透明覆盖模式或none纯色背景
 	playerEnable?: boolean; // 是否启用背景视频播放，默认false
@@ -89,6 +111,10 @@ export type BackgroundWallpaperConfig = {
 		postInfo?: {
 			mode: "description" | "meta";
 		};
+		// 图片填充方式："cover" 铺满整个横幅（会裁切上下），"contain" 完整显示原图不裁切
+		fit?: "cover" | "contain";
+		// fit 为 "contain" 时，两侧留白是否用同一张图的模糊放大版填充（默认 true）
+		blurBackdrop?: boolean;
 		navbar?: {
 			transparentMode?: "semi" | "semifull" | "none"; // 导航栏透明模式："semi" 半透明，"semifull" 动态透明，"none" 纯色不透明
 			blur?: number; // 毛玻璃模糊度，0 即关闭导航栏毛玻璃
@@ -120,4 +146,6 @@ export type BackgroundWallpaperConfig = {
 				  }; // 是否启用模糊渐变，支持布尔值或分别设置桌面端和移动端，默认 true
 		};
 	};
+	pageBackground?: PageBackgroundConfig; // 横幅模式下的整页随机背景图（横幅以下区域）
+	uiOpacity?: UiOpacityConfig; // 界面不透明度滑块（导航栏除外）
 };

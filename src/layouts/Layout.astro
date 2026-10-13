@@ -87,6 +87,25 @@ const shouldShowTopHighlight = navbarTransparentMode === "semifull";
 // 全屏壁纸布局：classic 为文档流旧版，hero 为固定首屏新版
 const fullscreenLayout = backgroundWallpaper.fullscreen?.layout ?? "classic";
 
+// 整页随机背景图（横幅模式下横幅以下的区域）：
+// 由 head 里的内联脚本在首帧前随机挑一张，写进 <html> 上的 --page-bg-image / --page-bg-image-set。
+// 必须客户端随机：站点是静态构建，构建期 Math.random() 只会固化成同一张图，
+// 所以这里不做构建期抽取；JS 不可用时两个变量保持 none，自动退回纯色 --page-bg。
+const pageBackground = backgroundWallpaper.pageBackground;
+const pageBgWallpapers =
+	(pageBackground?.enable ? pageBackground.wallpapers : [])
+		.filter((item) => item?.file)
+		.map((item) => ({
+			avif: `/wallpaper/${item.file}`,
+			webp: `/wallpaper/${item.webpFile ?? item.file.replace(/\.[^.]+$/, ".webp")}`,
+		}));
+
+// 界面不透明度（导航栏除外）：默认值，首帧前由内联脚本按 localStorage 覆盖
+const uiOpacityDefault = Math.min(
+	100,
+	Math.max(0, Math.round(backgroundWallpaper.uiOpacity?.default ?? 100)),
+);
+
 // 子菜单 / 浮动面板的毛玻璃模糊度：跟随 navbar.blur，但不受壁纸模式影响，
 // 且带一个最小值 —— 导航栏可以用 blur: 0 关掉毛玻璃，面板则始终保留毛玻璃。
 // 之所以不复用 #navbar 上的 --navbar-glass-blur：
@@ -155,12 +174,22 @@ const ogImageAlt = propsOgImageAlt ?? pageTitle;
 ---
 
 <!doctype html>
-<html lang={siteLang} class="bg-(--page-bg) text-[14px] md:text-[16px]" data-wallpaper-mode={backgroundWallpaper.mode} data-fullscreen-layout={fullscreenLayout} data-has-wallpaper={hasWallpaper ? "" : undefined} data-tag-style={siteConfig.tagStyle ?? "pill"} data-category-style={siteConfig.categoryStyle ?? "rectangle"}>
+<html lang={siteLang} class="bg-(--page-bg) text-[14px] md:text-[16px]" data-wallpaper-mode={backgroundWallpaper.mode} data-fullscreen-layout={fullscreenLayout} data-page-bg-fixed={(pageBackground?.enable && pageBackground.fixed) ? "" : undefined} data-has-wallpaper={hasWallpaper ? "" : undefined} data-tag-style={siteConfig.tagStyle ?? "pill"} data-category-style={siteConfig.categoryStyle ?? "rectangle"}>
   <head>
     <meta charset="UTF-8" />
     <style is:inline>
 			@layer properties, theme, base, components, utilities;
 		</style>
+    {pageBgWallpapers.length > 0 && (
+      <script is:inline set:html={`(function(){try{
+var L=${JSON.stringify(pageBgWallpapers)},d=document.documentElement;
+if(!L.length)return;
+var p=Math.floor(Math.random()*L.length),s=L[p];
+d.style.setProperty("--page-bg-image",'url("'+s.webp+'")');
+if(window.CSS&&CSS.supports&&CSS.supports("background-image",'image-set(url("x") type("image/avif"))'))
+d.style.setProperty("--page-bg-image-set",'image-set(url("'+s.avif+'") type("image/avif"),url("'+s.webp+'") type("image/webp"))');
+}catch(e){}})();`} />
+    )}
     {analyticsConfig?.googleAnalyticsId && (
             <GoogleAnalytics analyticsId={analyticsConfig.googleAnalyticsId} />
     )}
@@ -356,6 +385,7 @@ const ogImageAlt = propsOgImageAlt ?? pageTitle;
         baseUrl: import.meta.env.BASE_URL,
         cardTransparentOpacity: backgroundWallpaper.overlay?.cardOpacity ?? 0.6,
         fullscreenLayout,
+        uiOpacityDefault,
       }}
     >
       // 主题初始化 - 与setting-utils.ts保持一致
@@ -473,6 +503,22 @@ const ogImageAlt = propsOgImageAlt ?? pageTitle;
         const bannerTitleEnabled = localStorage.getItem("bannerTitleEnabled");
         if (bannerTitleEnabled !== null) {
           document.documentElement.setAttribute("data-banner-title-enabled", bannerTitleEnabled);
+        }
+      })();
+
+      // 初始化界面不透明度 - 在首帧前写好 CSS 变量，避免刷新时卡片先实后透
+      (function applyUiOpacity() {
+        let percent = uiOpacityDefault;
+        try {
+          const stored = localStorage.getItem("uiOpacity");
+          if (stored !== null) percent = parseFloat(stored);
+        } catch (e) {}
+        if (isNaN(percent)) percent = 100;
+        percent = Math.min(100, Math.max(0, Math.round(percent)));
+        document.documentElement.style.setProperty("--ui-opacity", String(percent / 100));
+        // 100 时不加 data-ui-opacity，卡片就是主题原本的颜色
+        if (percent < 100) {
+          document.documentElement.setAttribute("data-ui-opacity", String(percent));
         }
       })();
     </script>

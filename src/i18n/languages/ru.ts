@@ -405,6 +405,7 @@ export const ru: Translation = {
 	[Key.overlayOpacity]: "Прозрачность обоев",
 	[Key.overlayBlur]: "Размытие фона",
 	[Key.overlayCardOpacity]: "Прозрачность карточек",
+	[Key.uiOpacity]: "Непрозрачность интерфейса",
 
 	// Вкладки панели настроек
 	[Key.settingsTabAppearance]: "Оформление",

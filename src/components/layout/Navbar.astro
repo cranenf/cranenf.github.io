@@ -24,6 +24,14 @@ import DropdownMenu from "./DropdownMenu.astro";
 
 const className = Astro.props.class;
 
+// 界面不透明度滑块（0-100）：只影响内容区卡片，导航栏自身始终不透明
+const uiOpacityConfig = backgroundWallpaper.uiOpacity;
+const uiOpacityEnabled = uiOpacityConfig?.enable === true;
+const uiOpacityDefault = Math.min(
+	100,
+	Math.max(0, Math.round(uiOpacityConfig?.default ?? 100)),
+);
+
 // 检查是否为首页
 const isHomePageCheck = isHomePage(Astro.url.pathname);
 
@@ -200,6 +208,22 @@ const logoVariants = await Promise.all(
                 })}
             </div>
             <div class="flex col-start-3 justify-self-end">
+                {uiOpacityEnabled && (
+                    <div class="ui-opacity-control hidden md:flex" title={i18n(I18nKey.uiOpacity)}>
+                        <Icon name="material-symbols:opacity-rounded" class="ui-opacity-icon" />
+                        <input
+                            id="ui-opacity-slider"
+                            class="ui-opacity-slider"
+                            type="range"
+                            min="0"
+                            max="100"
+                            step="1"
+                            value={uiOpacityDefault}
+                            aria-label={i18n(I18nKey.uiOpacity)}
+                        />
+                        <span id="ui-opacity-value" class="ui-opacity-value">{uiOpacityDefault}</span>
+                    </div>
+                )}
                 <!--<SearchPanel client:load>-->
                 <Search
                     client:load
@@ -326,6 +350,43 @@ function loadButtonScript() {
                 themePanel.classList.toggle("float-panel-closed");
             }
         };
+    }
+
+    // 界面不透明度滑块：0-100，写进 <html> 上的 --ui-opacity，
+    // CSS 只把它用在 #content-panel / #floating-toc-wrapper 里，导航栏不受影响。
+    let uiOpacitySlider = document.getElementById("ui-opacity-slider");
+    if (uiOpacitySlider) {
+        let uiOpacityValue = document.getElementById("ui-opacity-value");
+        let rootEl = document.documentElement;
+
+        // 值以 html 上的 CSS 变量为准（首帧前已由 Layout 的内联脚本写好）
+        function currentUiOpacity() {
+            let v = parseFloat(getComputedStyle(rootEl).getPropertyValue("--ui-opacity"));
+            if (isNaN(v)) v = 1;
+            return Math.round(Math.min(1, Math.max(0, v)) * 100);
+        }
+
+        function applyUiOpacity(percent) {
+            let p = Math.min(100, Math.max(0, Math.round(percent)));
+            rootEl.style.setProperty("--ui-opacity", String(p / 100));
+            // 100 时去掉属性，完全回到主题原本的卡片配色
+            if (p < 100) rootEl.setAttribute("data-ui-opacity", String(p));
+            else rootEl.removeAttribute("data-ui-opacity");
+            if (uiOpacityValue) uiOpacityValue.textContent = String(p);
+        }
+
+        let initialOpacity = currentUiOpacity();
+        uiOpacitySlider.value = String(initialOpacity);
+        if (uiOpacityValue) uiOpacityValue.textContent = String(initialOpacity);
+
+        uiOpacitySlider.addEventListener("input", function () {
+            let p = parseInt(uiOpacitySlider.value, 10);
+            if (isNaN(p)) p = 100;
+            applyUiOpacity(p);
+            try {
+                localStorage.setItem("uiOpacity", String(p));
+            } catch (e) {}
+        });
     }
 
     document.addEventListener("click", function(event) {

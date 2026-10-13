@@ -394,6 +394,7 @@ export const zh_CN: Translation = {
 	[Key.overlayOpacity]: "壁纸透明度",
 	[Key.overlayBlur]: "背景模糊度",
 	[Key.overlayCardOpacity]: "卡片透明度",
+	[Key.uiOpacity]: "界面不透明度",
 
 	// 设置面板标签
 	[Key.settingsTabAppearance]: "外观",

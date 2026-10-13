@@ -325,3 +325,93 @@ html[data-has-wallpaper] #navbar[data-transparent-mode="semi"].navbar-sticky-sha
 :root.dark[data-has-wallpaper] #navbar[data-transparent-mode="semi"].navbar-sticky-shadow>div {
     box-shadow: inset 0 1px 0 var(--navbar-glass-highlight), 0 1px 0 var(--navbar-glass-hairline) !important;
 }
+
+/* ============================================
+ * 界面不透明度滑块（搜索框左侧）
+ * 只改内容区卡片的不透明度，导航栏自身始终不透明
+ * ============================================ */
+.ui-opacity-control {
+    align-items: center;
+    gap: 0.375rem;
+    height: 2.75rem;
+    margin-right: 0.5rem;
+    padding-inline: 0.625rem;
+    border-radius: 0.5rem;
+    background-color: rgb(0 0 0 / 0.04);
+    transition: background-color 0.3s ease;
+}
+
+.ui-opacity-control:hover {
+    background-color: rgb(0 0 0 / 0.06);
+}
+
+:root.dark .ui-opacity-control {
+    background-color: rgb(255 255 255 / 0.05);
+}
+
+:root.dark .ui-opacity-control:hover {
+    background-color: rgb(255 255 255 / 0.08);
+}
+
+.ui-opacity-icon {
+    font-size: 1.15rem;
+    opacity: 0.75;
+}
+
+.ui-opacity-value {
+    min-width: 1.75rem;
+    text-align: right;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.75;
+}
+
+.ui-opacity-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 5.5rem;
+    height: 1rem;
+    background: transparent;
+    cursor: pointer;
+}
+
+.ui-opacity-slider:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+    border-radius: 9999px;
+}
+
+/* WebKit / Blink */
+.ui-opacity-slider::-webkit-slider-runnable-track {
+    height: 0.25rem;
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--btn-content) 25%, transparent);
+}
+
+.ui-opacity-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    margin-top: -0.3125rem;
+    border: none;
+    border-radius: 9999px;
+    background: var(--primary);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+}
+
+/* Firefox */
+.ui-opacity-slider::-moz-range-track {
+    height: 0.25rem;
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--btn-content) 25%, transparent);
+}
+
+.ui-opacity-slider::-moz-range-thumb {
+    width: 0.875rem;
+    height: 0.875rem;
+    border: none;
+    border-radius: 9999px;
+    background: var(--primary);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+}

@@ -390,6 +390,7 @@ enum I18nKey {
 	overlayOpacity = "overlayOpacity",
 	overlayBlur = "overlayBlur",
 	overlayCardOpacity = "overlayCardOpacity",
+	uiOpacity = "uiOpacity",
 
 	// 设置面板标签
 	settingsTabAppearance = "settingsTabAppearance",

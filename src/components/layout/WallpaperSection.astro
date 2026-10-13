@@ -23,6 +23,13 @@ const wallpaperPosition = state.isFullscreenMode
 	? (backgroundWallpaper.fullscreen?.position ??
 		backgroundWallpaper.banner?.position)
 	: backgroundWallpaper.banner?.position;
+
+// 横幅图片填充方式：contain 时完整显示原图，两侧留白用同一张图的模糊放大版填充
+const bannerFit = backgroundWallpaper.banner?.fit ?? "cover";
+const bannerBlurBackdrop =
+	bannerFit === "contain" &&
+	(backgroundWallpaper.banner?.blurBackdrop ?? true) &&
+	!state.isFullscreenMode;
 ---
 
 <!-- Wallpaper - 如果允许切换则始终渲染，否则只渲染当前模式 -->
@@ -36,7 +43,9 @@ const wallpaperPosition = state.isFullscreenMode
          data-carousel-enabled={state.bannerCarouselEnabledDefault}
          data-carousel-switchable={state.bannerCarouselSwitchable}
          data-carousel-interval={state.bannerCarouselInterval}
-         data-carousel-effect={state.bannerCarouselEffect}>
+         data-carousel-effect={state.bannerCarouselEffect}
+         data-banner-fit={bannerFit}
+         data-banner-blur-backdrop={bannerBlurBackdrop ? "true" : undefined}>
         {/* 图片放在 <template> 里，浏览器不会发起请求；由轮播脚本挑中随机那张后克隆进 DOM */}
         {backgroundImages.mobile.map((src, index) => (
             <div class:list={["slide-item block lg:hidden", index === 0 && "active"]} data-index={index}>
@@ -111,7 +120,9 @@ const wallpaperPosition = state.isFullscreenMode
     </div>
     ) : (
     /* 单图模式 */
-    <div class="relative h-full w-full" id="banner-images-container">
+    <div class="relative h-full w-full" id="banner-images-container"
+         data-banner-fit={bannerFit}
+         data-banner-blur-backdrop={bannerBlurBackdrop ? "true" : undefined}>
         {/* 两侧都放在 <template> 里，由下面的脚本按 matchMedia 只实例化匹配的那一侧，
             避免桌面端白下一张手机图（display:none 挡不住 loading="eager"） */}
         {backgroundImages.mobile.length > 0 && (
@@ -233,6 +244,31 @@ const wallpaperPosition = state.isFullscreenMode
                 }
             }
 
+            // contain 填充模式：把同一张图克隆成模糊放大的背景层，填满主体图两侧的留白。
+            // 整块 <picture> 一起克隆，才能沿用 <source> 的格式协商结果——浏览器会选到
+            // 与主图完全相同的 URL，直接命中缓存，不会多发一次请求。
+            function addBlurBackdrop(host) {
+                var img = host.querySelector('img');
+                if (!img) return;
+                if (container.getAttribute('data-banner-blur-backdrop') !== 'true') return;
+                if (host.querySelector('.banner-blur-backdrop')) return;
+                var media = img.closest('picture') || img;
+                var clone = media.cloneNode(true);
+                var imgs = clone.tagName === 'IMG' ? [clone] : clone.querySelectorAll('img');
+                for (var i = 0; i < imgs.length; i++) {
+                    imgs[i].classList.remove('opacity-0', 'transition-opacity', 'duration-500', 'ease-out');
+                    imgs[i].style.opacity = '1';
+                    imgs[i].removeAttribute('fetchpriority');
+                    imgs[i].removeAttribute('alt');
+                    imgs[i].setAttribute('aria-hidden', 'true');
+                }
+                var layer = document.createElement('div');
+                layer.className = 'banner-blur-backdrop';
+                layer.setAttribute('aria-hidden', 'true');
+                layer.appendChild(clone);
+                host.insertBefore(layer, host.firstChild);
+            }
+
             // 把 <template> 里的图片实例化进 DOM —— 插入的那一刻才开始下载
             function materialize(slideEl, high) {
                 if (!slideEl) return false;
@@ -256,6 +292,7 @@ const wallpaperPosition = state.isFullscreenMode
                 }
                 slideEl.appendChild(frag);
                 tpl.remove();
+                addBlurBackdrop(slideEl);
                 fadeInWhenLoaded(slideEl);
                 return true;
             }
@@ -474,6 +511,31 @@ const wallpaperPosition = state.isFullscreenMode
             var container = document.getElementById('banner-images-container');
             if (!container) return;
 
+            // contain 填充模式：把同一张图克隆成模糊放大的背景层，填满主体图两侧的留白。
+            // 整块 <picture> 一起克隆，才能沿用 <source> 的格式协商结果——浏览器会选到
+            // 与主图完全相同的 URL，直接命中缓存，不会多发一次请求。
+            function addBlurBackdrop(host) {
+                var img = host.querySelector('img');
+                if (!img) return;
+                if (container.getAttribute('data-banner-blur-backdrop') !== 'true') return;
+                if (host.querySelector('.banner-blur-backdrop')) return;
+                var media = img.closest('picture') || img;
+                var clone = media.cloneNode(true);
+                var imgs = clone.tagName === 'IMG' ? [clone] : clone.querySelectorAll('img');
+                for (var i = 0; i < imgs.length; i++) {
+                    imgs[i].classList.remove('opacity-0', 'transition-opacity', 'duration-500', 'ease-out');
+                    imgs[i].style.opacity = '1';
+                    imgs[i].removeAttribute('fetchpriority');
+                    imgs[i].removeAttribute('alt');
+                    imgs[i].setAttribute('aria-hidden', 'true');
+                }
+                var layer = document.createElement('div');
+                layer.className = 'banner-blur-backdrop';
+                layer.setAttribute('aria-hidden', 'true');
+                layer.appendChild(clone);
+                host.insertBefore(layer, host.firstChild);
+            }
+
             function materialize(slot, high) {
                 var tpl = slot.querySelector('template');
                 if (!tpl) return;
@@ -491,6 +553,7 @@ const wallpaperPosition = state.isFullscreenMode
                 }
                 slot.appendChild(frag);
                 tpl.remove();
+                addBlurBackdrop(slot);
                 // Layout 的全局淡入只扫解析期的图片，克隆进来的要自己接管
                 var ph = slot.querySelector('.lqip-placeholder');
                 if (!img) return;
