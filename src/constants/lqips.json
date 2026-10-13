@@ -19,7 +19,12 @@
   "public:assets/images/sponsor/wechat.png": "d5d5d5dad9d7dbd8cf",
   "public:assets/images/sponsor/alipay.png": "8ebbde91bedf93c0e0",
   "public:assets/images/ad/ad1.webp": "a1b8b68a8e918c8f93",
-  "src:content/projects/images/firefly.avif": "b5b0b3bcb6bbe0e0df",
   "src:assets/images/background.jpg": "616b7542464d8e9290",
-  "src:assets/images/avatar.jpg": "141613131512131512"
+  "src:assets/images/avatar.jpg": "141613131512131512",
+  "public:assets/images/sponsor/wechat.jpg": "9495949a9c9ba1a4a2",
+  "src:content/posts/images/img-04-segment-iter.png": "e8e8e8ececece4e4e4",
+  "src:content/posts/images/img-03-square-iter.png": "eae9e9e8e8e8e8e8e9",
+  "src:content/posts/images/img-02-pair-enum.png": "f3efeff3f2f2f3f0f0",
+  "src:content/posts/images/img-01-func-graph.png": "f7f8f7fafcfcfbf9f9",
+  "src:content/posts/images/2ntz3op1.png": "999cbe9e9fbbe1e6f3"
 }
