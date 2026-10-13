@@ -1,0 +1,150 @@
+/*!
+ * giscus 自定义主题（暗色）
+ *
+ * 与 giscus-light.css 成对使用：Giscus.astro 依据 <html class="dark"> 在两个文件间切换 data-theme。
+ * 完整给出 --color-* 取值（自定义 URL 会替换内置主题，而非叠加），取色对齐
+ * src/styles/variables.styl 的暗色变量，色相固定为默认值 165（跨源 iframe 读不到站点变量）。
+ * 底色 transparent，透出父页 #post-comments 卡片（暗色卡片自带 oklch(0.23 0.015 var(--hue))）。
+ * 语法高亮色沿用 giscus 内置 dark dimmed 主题：MIT License, Copyright (c) 2018 GitHub Inc.
+ */
+
+main {
+	--color-prettylights-syntax-comment: #768390;
+	--color-prettylights-syntax-constant: #6cb6ff;
+	--color-prettylights-syntax-entity: #dcbdfb;
+	--color-prettylights-syntax-storage-modifier-import: #adbac7;
+	--color-prettylights-syntax-entity-tag: #8ddb8c;
+	--color-prettylights-syntax-keyword: #f47067;
+	--color-prettylights-syntax-string: #96d0ff;
+	--color-prettylights-syntax-variable: #f69d50;
+	--color-prettylights-syntax-brackethighlighter-unmatched: #e5534b;
+	--color-prettylights-syntax-invalid-illegal-text: #cdd9e5;
+	--color-prettylights-syntax-invalid-illegal-bg: #922323;
+	--color-prettylights-syntax-carriage-return-text: #cdd9e5;
+	--color-prettylights-syntax-carriage-return-bg: #ad2e2c;
+	--color-prettylights-syntax-string-regexp: #8ddb8c;
+	--color-prettylights-syntax-markup-list: #eac55f;
+	--color-prettylights-syntax-markup-heading: #316dca;
+	--color-prettylights-syntax-markup-italic: #adbac7;
+	--color-prettylights-syntax-markup-bold: #adbac7;
+	--color-prettylights-syntax-markup-deleted-text: #ffd8d3;
+	--color-prettylights-syntax-markup-deleted-bg: #78191b;
+	--color-prettylights-syntax-markup-inserted-text: #b4f1b4;
+	--color-prettylights-syntax-markup-inserted-bg: #1b4721;
+	--color-prettylights-syntax-markup-changed-text: #ffddb0;
+	--color-prettylights-syntax-markup-changed-bg: #682d0f;
+	--color-prettylights-syntax-markup-ignored-text: #adbac7;
+	--color-prettylights-syntax-markup-ignored-bg: #255ab2;
+	--color-prettylights-syntax-meta-diff-range: #dcbdfb;
+	--color-prettylights-syntax-brackethighlighter-angle: #768390;
+	--color-prettylights-syntax-sublimelinter-gutter-mark: #545d68;
+	--color-prettylights-syntax-constant-other-reference-link: #96d0ff;
+
+	/* 容器与文本：底色透明 + 站点 --line-divider / --content-meta */
+	--color-canvas-default: transparent;
+	--color-canvas-overlay: oklch(0.28 0.02 165);
+	--color-canvas-inset: oklch(0.2 0.015 165);
+	--color-canvas-subtle: oklch(0.33 0.035 165);
+	--color-border-default: rgba(255, 255, 255, 0.1);
+	--color-border-muted: rgba(255, 255, 255, 0.08);
+	--color-fg-default: oklch(0.93 0.01 165);
+	--color-fg-muted: rgba(255, 255, 255, 0.6);
+	--color-fg-subtle: rgba(255, 255, 255, 0.45);
+	--color-neutral-muted: rgba(255, 255, 255, 0.08);
+
+	/* 强调色：暗色 --primary */
+	--color-accent-fg: oklch(0.75 0.14 165);
+	--color-accent-emphasis: oklch(0.75 0.14 165);
+	--color-accent-muted: oklch(0.75 0.14 165 / 35%);
+	--color-accent-subtle: oklch(0.75 0.14 165 / 15%);
+
+	/* 普通按钮：站点暗色 --btn-regular-bg / hover / active */
+	--color-btn-text: oklch(0.93 0.01 165);
+	--color-btn-bg: oklch(0.33 0.035 165);
+	--color-btn-border: rgba(255, 255, 255, 0.08);
+	--color-btn-shadow: 0 0 transparent;
+	--color-btn-inset-shadow: 0 0 transparent;
+	--color-btn-hover-bg: oklch(0.38 0.04 165);
+	--color-btn-hover-border: rgba(255, 255, 255, 0.12);
+	--color-btn-active-bg: oklch(0.43 0.045 165);
+	--color-btn-active-border: rgba(255, 255, 255, 0.12);
+	--color-btn-selected-bg: oklch(0.38 0.04 165);
+
+	/* 主按钮（提交评论）：暗色下用亮青底 + 深色字 */
+	--color-btn-primary-text: oklch(0.18 0.02 165);
+	--color-btn-primary-bg: oklch(0.75 0.14 165);
+	--color-btn-primary-border: oklch(0.75 0.14 165);
+	--color-btn-primary-shadow: 0 0 transparent;
+	--color-btn-primary-inset-shadow: 0 0 transparent;
+	--color-btn-primary-hover-bg: oklch(0.79 0.13 165);
+	--color-btn-primary-hover-border: oklch(0.79 0.13 165);
+	--color-btn-primary-selected-bg: oklch(0.72 0.14 165);
+	--color-btn-primary-selected-shadow: 0 0 transparent;
+	--color-btn-primary-disabled-text: oklch(0.18 0.02 165 / 60%);
+	--color-btn-primary-disabled-bg: oklch(0.75 0.14 165 / 40%);
+	--color-btn-primary-disabled-border: transparent;
+
+	--color-action-list-item-default-hover-bg: oklch(0.38 0.04 165);
+	--color-segmented-control-bg: oklch(0.3 0.025 165);
+	--color-segmented-control-button-bg: oklch(0.23 0.015 165);
+	--color-segmented-control-button-selected-border: oklch(0.75 0.14 165);
+
+	/* 语义色沿用 GitHub 暗色 */
+	--color-success-fg: #57ab5a;
+	--color-attention-fg: #c69026;
+	--color-attention-muted: rgb(174 124 20 / 40%);
+	--color-attention-subtle: rgb(174 124 20 / 15%);
+	--color-danger-fg: #e5534b;
+	--color-danger-muted: rgb(229 83 75 / 40%);
+	--color-danger-subtle: rgb(229 83 75 / 10%);
+
+	--color-primer-shadow-inset: 0 0 transparent;
+	--color-scale-gray-7: oklch(0.33 0.035 165);
+	--color-scale-blue-8: oklch(0.75 0.14 165 / 25%);
+	--color-social-reaction-bg-hover: var(--color-scale-gray-7);
+	--color-social-reaction-bg-reacted-hover: oklch(0.75 0.14 165 / 25%);
+}
+
+/* 底色与站点卡片同源：透出父页 #post-comments 卡片 */
+main,
+body,
+.gsc-homepage-bg {
+	background-color: transparent !important;
+}
+
+/* 字体与站点 --font-sans 保持一致 */
+main {
+	font-family:
+		"Roboto", "sans-serif", ui-sans-serif, system-ui, sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+/* 圆角对齐站点 --radius-large: 1rem */
+main .gsc-comment-box,
+main .gsc-reply-box,
+main .gsc-reactions-menu {
+	border-radius: 1rem;
+}
+
+main button,
+main .gsc-reaction,
+main .gsc-reactions-menu-item,
+main input[type="text"],
+main textarea {
+	border-radius: 0.5rem;
+}
+
+/* 评论输入区/编辑区用站点按钮色作填充，其余表面保持透明 */
+main .gsc-comment-box,
+main .gsc-reply-box {
+	background-color: var(--color-canvas-subtle);
+	border-color: var(--color-border-muted);
+}
+
+main .pagination-loader-container {
+	background-image: url("https://github.com/images/modules/pulls/progressive-disclosure-line-dark.svg");
+}
+
+main .gsc-loading-image {
+	background-image: url("https://github.githubassets.com/images/mona-loading-dark.gif");
+}
