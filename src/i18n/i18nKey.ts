@@ -509,13 +509,6 @@ enum I18nKey {
 	passwordError = "passwordError",
 	passwordProtectedRss = "passwordProtectedRss",
 
-	// 背景视频播放器
-	videoPlay = "videoPlay",
-	videoPause = "videoPause",
-	videoPrev = "videoPrev",
-	videoNext = "videoNext",
-	videoLoadError = "videoLoadError",
-
 	// 沉浸阅读 (immersive reading)
 	immersiveReading = "immersiveReading",
 	enterImmersiveReading = "enterImmersiveReading",

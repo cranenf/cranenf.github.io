@@ -525,12 +525,6 @@ export const ja: Translation = {
 	[Key.passwordProtectedRss]:
 		"この記事は暗号化されています。ウェブサイトにアクセスしてご覧ください。",
 
-	// 背景動画プレイヤー
-	[Key.videoPlay]: "背景動画を再生",
-	[Key.videoPause]: "背景動画を一時停止",
-	[Key.videoPrev]: "前の動画",
-	[Key.videoNext]: "次の動画",
-	[Key.videoLoadError]: "動画の読み込みに失敗しました",
 
 	// 没入型リーディング
 	[Key.immersiveReading]: "没入型リーディング",

@@ -525,12 +525,6 @@ export const ko: Translation = {
 	[Key.passwordProtectedRss]:
 		"이 글은 암호화되어 있습니다. 웹사이트에서 확인해 주세요.",
 
-	// Background video player
-	[Key.videoPlay]: "배경 영상 재생",
-	[Key.videoPause]: "배경 영상 일시정지",
-	[Key.videoPrev]: "이전 영상",
-	[Key.videoNext]: "다음 영상",
-	[Key.videoLoadError]: "영상을 불러오지 못했습니다",
 
 	// 몰입형 읽기
 	[Key.immersiveReading]: "몰입형 읽기",

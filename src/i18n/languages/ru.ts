@@ -529,12 +529,6 @@ export const ru: Translation = {
 	[Key.passwordProtectedRss]:
 		"Эта статья зашифрована. Пожалуйста, посетите сайт для просмотра.",
 
-	// Фоновый видеоплеер
-	[Key.videoPlay]: "Воспроизвести фоновое видео",
-	[Key.videoPause]: "Пауза фонового видео",
-	[Key.videoPrev]: "Предыдущее видео",
-	[Key.videoNext]: "Следующее видео",
-	[Key.videoLoadError]: "Не удалось загрузить видео",
 
 	// Чтение без отвлечений
 	[Key.immersiveReading]: "Чтение без отвлечений",
