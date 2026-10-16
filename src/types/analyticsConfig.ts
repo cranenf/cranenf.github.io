@@ -3,6 +3,7 @@ export type AnalyticsConfig = {
 	microsoftClarityId?: string; // Microsoft Clarity ID
 	umamiAnalytics?: {
 		websiteId?: string; // Umami Website ID
+		shareUrl?: string; // Umami 站点公开分享链接，留空则不显示总访问量/访客数
 		scriptUrl?: string; // Umami JS地址，支持使用自建
 		replaysScriptUrl?: string; // Umami 会话回放脚本地址
 		trackOutboundLinks?: boolean; // 是否追踪出站链接点击事件，默认 true

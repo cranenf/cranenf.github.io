@@ -1,7 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import WidgetLayout from "@/components/common/WidgetLayout.astro";
-import { siteConfig } from "@/config";
+import { analyticsConfig, siteConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import type { WidgetComponentConfig } from "@/types/config";
@@ -23,6 +23,9 @@ const showTitle = widgetConfig?.showTitle !== false;
 
 // 从配置中获取站点开始日期
 const siteStartDate = siteConfig.siteStartDate || "2025-01-01";
+
+// Umami 公开分享链接：配置后侧边栏显示总访问量/访客数，留空时这两项保持隐藏
+const umamiShareUrl = analyticsConfig.umamiAnalytics?.shareUrl?.trim() ?? "";
 
 // 获取所有文章
 const posts = await getSortedPosts();
@@ -72,6 +75,24 @@ const todayText = i18n(I18nKey.today);
 
 const stats = [
 	{
+		// 运行时数据：由 Umami 公开分享链接提供，取数成功后才显示
+		icon: "material-symbols:visibility-outline",
+		label: i18n(I18nKey.siteStatsTotalViews),
+		value: 0,
+		dynamic: true,
+		id: "total-views",
+		hidden: true,
+	},
+	{
+		// 运行时数据：由 Umami 公开分享链接提供，取数成功后才显示
+		icon: "material-symbols:group-outline",
+		label: i18n(I18nKey.siteStatsVisitors),
+		value: 0,
+		dynamic: true,
+		id: "visitors",
+		hidden: true,
+	},
+	{
 		icon: "material-symbols:article-outline",
 		label: i18n(I18nKey.siteStatsPostCount),
 		value: posts.length,
@@ -112,9 +133,13 @@ const stats = [
 ---
 
 <WidgetLayout name={i18n(I18nKey.siteStats)} showTitle={showTitle} id="site-stats" class={className} style={style}>
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col gap-2" data-site-stats-list>
     {stats.map((stat) => (
-      <div class="flex items-center justify-between px-3 py-1.5">
+      <div
+        class="flex items-center justify-between px-3 py-1.5"
+        data-stat-row={stat.id}
+        style={stat.hidden ? "display: none" : undefined}
+      >
         <div class="flex items-center gap-2.5">
           <div class="text-(--primary) text-xl">
             <Icon name={stat.icon} />
@@ -141,7 +166,7 @@ const stats = [
   </div>
 </WidgetLayout>
 
-<script is:inline define:vars={{ siteStartDate, lastPostDate, todayText }}>
+<script is:inline define:vars={{ siteStartDate, lastPostDate, todayText, umamiShareUrl }}>
   function updateDynamicStats() {
     const today = new Date();
 
@@ -178,15 +203,218 @@ const stats = [
     }
   }
 
+  // ===== 运行时访问量统计（总访问量 PV / 访客数 UV）=====
+  // 只使用 Umami 公开分享链接换取的一次性 token（没有任何账号级 API Key）。
+  // 任何一步失败都静默降级：两行保持隐藏，不抛未捕获异常。
+  var SITE_STATS_CACHE_KEY = "firefly:site-stats:pv-uv";
+  var SITE_STATS_CACHE_TTL = 5 * 60 * 1000; // 5 分钟
+
+  // 挂在 window 上，避免 Swup 切页重跑内联脚本时把请求状态和内存缓存冲掉
+  if (!window.__siteStatsState) {
+    window.__siteStatsState = { cache: null, requesting: false };
+  }
+  var siteStatsState = window.__siteStatsState;
+
+  function readSiteStatsCache() {
+    if (siteStatsState.cache) return siteStatsState.cache;
+    try {
+      var raw = sessionStorage.getItem(SITE_STATS_CACHE_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed.time !== "number") return null;
+      if (Date.now() - parsed.time > SITE_STATS_CACHE_TTL) return null;
+      siteStatsState.cache = parsed;
+      return parsed;
+    } catch (error) {
+      // sessionStorage 在隐私模式下可能抛异常，此时只用内存缓存兜底
+      return null;
+    }
+  }
+
+  function writeSiteStatsCache(pageviews, visitors) {
+    var entry = { time: Date.now(), pageviews: pageviews, visitors: visitors };
+    siteStatsState.cache = entry;
+    try {
+      sessionStorage.setItem(SITE_STATS_CACHE_KEY, JSON.stringify(entry));
+    } catch (error) {
+      // 写入失败无需处理，内存缓存已生效
+    }
+  }
+
+  // 分享链接 → 统计 API 基址：EU 区域在路径里带 /analytics/eu/，自建站点用 origin + /api
+  function resolveUmamiApiBase(shareUrl) {
+    try {
+      var parsed = new URL(shareUrl);
+      if (parsed.hostname.indexOf("cloud.umami.is") === -1) {
+        return parsed.origin + "/api";
+      }
+      if (parsed.pathname.indexOf("/analytics/eu/") !== -1) {
+        return "https://cloud.umami.is/analytics/eu/api";
+      }
+      return "https://cloud.umami.is/analytics/us/api";
+    } catch (error) {
+      return "";
+    }
+  }
+
+  // Umami 返回裸数字，这里同时兼容 { value: N } 形态
+  function unwrapStatNumber(value) {
+    if (value && typeof value === "object") return value.value;
+    return value;
+  }
+
+  function fillSiteStatsRow(statId, value) {
+    var rows = document.querySelectorAll('[data-stat-row="' + statId + '"]');
+    var text = Number(value).toLocaleString();
+    for (var i = 0; i < rows.length; i++) {
+      var cell = rows[i].querySelector('[data-stat-id="' + statId + '"]');
+      if (cell) cell.textContent = text;
+      // 只有真正拿到数值才显示，避免先闪出占位再消失
+      rows[i].style.display = "";
+    }
+  }
+
+  function applySiteStats(pageviews, visitors) {
+    fillSiteStatsRow("total-views", pageviews);
+    fillSiteStatsRow("visitors", visitors);
+  }
+
+  // 两跳请求：先取分享信息拿 websiteId/token，再带两个分享头取 stats
+  async function requestSiteStats() {
+    if (!umamiShareUrl) return null;
+
+    const apiBase = resolveUmamiApiBase(umamiShareUrl);
+    if (!apiBase) return null;
+
+    let sharePath = "";
+    try {
+      sharePath = new URL(umamiShareUrl).pathname;
+    } catch (error) {
+      return null;
+    }
+    const segments = sharePath.replace(/\/+$/, "").split("/");
+    const slug = segments[segments.length - 1];
+    if (!slug) return null;
+
+    try {
+      const shareResponse = await fetch(apiBase + "/share/" + encodeURIComponent(slug));
+      if (!shareResponse.ok) throw new Error("share endpoint " + shareResponse.status);
+      const share = await shareResponse.json();
+
+      const websiteId = share && share.websiteId;
+      const token = share && share.token;
+      if (!websiteId || !token) throw new Error("share payload missing websiteId/token");
+
+      const statsUrl =
+        apiBase +
+        "/websites/" +
+        encodeURIComponent(String(websiteId)) +
+        "/stats?startAt=0&endAt=" +
+        Date.now();
+      const statsResponse = await fetch(statsUrl, {
+        headers: {
+          "x-umami-share-token": token,
+          "x-umami-share-context": "1",
+        },
+      });
+      if (!statsResponse.ok) throw new Error("stats endpoint " + statsResponse.status);
+      const data = await statsResponse.json();
+
+      const pageviews = unwrapStatNumber(data && data.pageviews);
+      const visitors = unwrapStatNumber(data && data.visitors);
+      if (pageviews === undefined || pageviews === null) {
+        throw new Error("stats payload missing pageviews");
+      }
+      if (visitors === undefined || visitors === null) {
+        throw new Error("stats payload missing visitors");
+      }
+      return { pageviews: pageviews, visitors: visitors };
+    } catch (error) {
+      // 静默降级：保持两行隐藏
+      console.warn(
+        "[SiteStats] 访问量统计加载失败，已隐藏总访问量/访客数：",
+        error && error.message ? error.message : error,
+      );
+      return null;
+    }
+  }
+
+  function loadSiteStats() {
+    if (!umamiShareUrl) return;
+
+    var cached = readSiteStatsCache();
+    if (cached) {
+      applySiteStats(cached.pageviews, cached.visitors);
+      return;
+    }
+
+    if (siteStatsState.requesting) return;
+    siteStatsState.requesting = true;
+    requestSiteStats().then(function (data) {
+      siteStatsState.requesting = false;
+      if (!data) return;
+      writeSiteStatsCache(data.pageviews, data.visitors);
+      applySiteStats(data.pageviews, data.visitors);
+    });
+  }
+
+  // 只在组件进入视口后才发请求，避免为页面底部不可见的组件浪费请求
+  function observeSiteStats() {
+    if (!umamiShareUrl) return;
+    var containers = document.querySelectorAll("[data-site-stats-list]");
+    if (containers.length === 0) return;
+
+    // 切页后旧实例已脱离文档，统一撤销后再重新挂载，避免监听器堆积
+    if (window.__siteStatsObserver) {
+      window.__siteStatsObserver.disconnect();
+      window.__siteStatsObserver = null;
+    }
+
+    if (typeof IntersectionObserver === "undefined") {
+      loadSiteStats();
+      return;
+    }
+
+    var observer = new IntersectionObserver(
+      function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].isIntersecting) {
+            observer.disconnect();
+            window.__siteStatsObserver = null;
+            loadSiteStats();
+            return;
+          }
+        }
+      },
+      { rootMargin: "100px" },
+    );
+    window.__siteStatsObserver = observer;
+
+    for (var j = 0; j < containers.length; j++) {
+      observer.observe(containers[j]);
+    }
+  }
+
+  // Swup 切页后 DOM 被替换：先用缓存即时回填，再为新实例重新挂载可见性监听
+  function refreshSiteStats() {
+    var cached = readSiteStatsCache();
+    if (cached) applySiteStats(cached.pageviews, cached.visitors);
+    observeSiteStats();
+  }
+
   // 页面加载时更新
   updateDynamicStats();
+  refreshSiteStats();
 
   // 防止 Swup 切页重跑脚本时重复注册监听器
   if (!window.__siteStatsInit) {
     window.__siteStatsInit = true;
     // 页面切换时重新更新
     document.addEventListener("swup:contentReplaced", () => {
-      setTimeout(updateDynamicStats, 100);
+      setTimeout(() => {
+        updateDynamicStats();
+        refreshSiteStats();
+      }, 100);
     });
   }
 </script>

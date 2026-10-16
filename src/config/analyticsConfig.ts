@@ -9,6 +9,8 @@ export const analyticsConfig: AnalyticsConfig = {
 	umamiAnalytics: {
 		// Umami Website ID
 		websiteId: "",
+		// Umami 站点公开分享链接，填入后侧边栏才会显示总访问量/访客数；留空则自动隐藏这两项
+		shareUrl: "",
 		// Umami JS地址，支持使用自建
 		scriptUrl: "https://cloud.umami.is/script.js",
 		// Umami 会话回放脚本地址，支持使用自建

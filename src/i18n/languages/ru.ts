@@ -451,6 +451,8 @@ export const ru: Translation = {
 	[Key.siteStatsCategoryCount]: "Категории",
 	[Key.siteStatsTagCount]: "Теги",
 	[Key.siteStatsTotalWords]: "Всего слов",
+	[Key.siteStatsTotalViews]: "Всего просмотров",
+	[Key.siteStatsVisitors]: "Посетители",
 	[Key.siteStatsRunningDays]: "Дней работы",
 	[Key.siteStatsLastUpdate]: "Последняя активность",
 	[Key.siteStatsDaysAgo]: "{days} дней назад",
